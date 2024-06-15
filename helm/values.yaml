@@ -1,0 +1,48 @@
+replicaCount: 2
+
+image:
+  repository: docker.io/abseleem/api-server-test
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+  nodePort: 30000
+
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: api-server.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: []
+
+readinessProbe:
+  enabled: true
+  path: /status
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+livenessProbe:
+  enabled: true
+  path: /status
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+migrations:
+  enabled: false
+  image:
+    repository: api-server-migration
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  job:
+    backoffLimit: 4
